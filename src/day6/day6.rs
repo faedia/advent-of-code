@@ -84,6 +84,30 @@ fn part1(commands: Vec<Command>) -> usize {
     state.iter().flatten().filter(|is_on| **is_on).count()
 }
 
+fn part2(commands: Vec<Command>) -> i64 {
+    let mut state = [[0i64; 1000]; 1000].to_vec();
+
+    for command in commands {
+        for y in command.range.from.1..command.range.to.1 + 1 {
+            for x in command.range.from.0..command.range.to.0 + 1 {
+                match command.kind {
+                    CommandKind::TurnOn => {
+                        state[y][x] = state[y][x] + 1;
+                    }
+                    CommandKind::TurnOff => {
+                        state[y][x] = std::cmp::max(state[y][x] - 1, 0);
+                    }
+                    CommandKind::Toggle => {
+                        state[y][x] = state[y][x] + 2;
+                    }
+                }
+            }
+        }
+    }
+
+    state.iter().flatten().sum()
+}
+
 #[derive(Parser)]
 struct Cli {
     input: String,
@@ -94,6 +118,8 @@ fn main() {
     let input_str = read_to_string(args.input).unwrap();
     let part1_result = part1(parse_all(&input_str));
     println!("Solution for part 1: {}", part1_result);
+    let part2_result = part2(parse_all(&input_str));
+    println!("Solution for part 2: {}", part2_result);
 }
 
 #[cfg(test)]
@@ -131,7 +157,6 @@ mod tests {
             }
         );
     }
-
     #[test]
     fn part1_test() {
         assert_eq!(
@@ -172,6 +197,32 @@ mod tests {
                 .to_vec()
             ),
             0
+        );
+    }
+
+    #[test]
+    fn part2_test() {
+        let vec1 = [super::Command {
+            kind: super::CommandKind::TurnOn,
+            range: super::Range {
+                from: (0, 0),
+                to: (0, 0),
+            },
+        }]
+        .to_vec();
+        assert_eq!(super::part2(vec1), 1);
+        assert_eq!(
+            super::part2(
+                [super::Command {
+                    kind: super::CommandKind::Toggle,
+                    range: super::Range {
+                        from: (0, 0),
+                        to: (999, 999)
+                    }
+                }]
+                .to_vec()
+            ),
+            2000000
         );
     }
 }
