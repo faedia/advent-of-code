@@ -24,8 +24,24 @@ where
     input
         .map(|s| {
             let pairs = s.chars().zip(s.chars().skip(1));
-            println!("{:?}", pairs.collect::<Vec<(char, char)>>());
-            false
+            let mut triplets = s.chars().zip(s.chars().skip(2));
+
+            let cond1 = {
+                let mut pairs = pairs.peekable();
+                let mut cond = false;
+                while let Some((a1, a2)) = pairs.next() {
+                    let inner_pairs = pairs.clone();
+                    if inner_pairs.skip(1).any(|(b1, b2)| a1 == b1 && a2 == b2) {
+                        cond = true;
+                        break;
+                    }
+                }
+                cond
+            };
+
+            let cond2 = triplets.any(|(a, c)| a == c);
+
+            cond1 && cond2
         })
         .filter(|&b| b)
         .count()
@@ -57,10 +73,8 @@ mod tests {
 
     #[test]
     fn part2_test() {
-        assert_eq!(super::part2("xyxy".lines()), 1);
-        assert_eq!(super::part2("aabcdefgaa".lines()), 1);
-        assert_eq!(super::part2("aaa".lines()), 1);
         assert_eq!(super::part2("qjhvhtzxzqqjkmpb".lines()), 1);
+        assert_eq!(super::part2("xxyxx".lines()), 1);
         assert_eq!(super::part2("uurcxstgmygtbstg".lines()), 0);
         assert_eq!(super::part2("ieodomkazucvgmuy".lines()), 0);
     }
