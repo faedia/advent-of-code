@@ -60,17 +60,19 @@ fn parse_all(s: &str) -> Vec<Command> {
     s.lines().map(parse).collect()
 }
 
-fn do_commands<B, F>(commands: Vec<Command>, init: &mut B, mut f: F) -> ()
+fn do_commands<B, F>(commands: Vec<Command>, mut init: B, mut f: F) -> B
 where
     F: FnMut(&mut B, &Command, (usize, usize)) -> (),
 {
     for command in commands {
         for y in command.range.from.1..command.range.to.1 + 1 {
             for x in command.range.from.0..command.range.to.0 + 1 {
-                f(init, &command, (x, y));
+                f(&mut init, &command, (x, y));
             }
         }
     }
+
+    init
 }
 
 fn part1(commands: Vec<Command>) -> usize {
@@ -90,9 +92,11 @@ fn part1(commands: Vec<Command>) -> usize {
                 state[y][x] = !state[y][x];
             }
         },
-    );
-
-    state.iter().flatten().filter(|is_on| **is_on).count()
+    )
+    .iter()
+    .flatten()
+    .filter(|is_on| **is_on)
+    .count()
 }
 
 fn part2(commands: Vec<Command>) -> i64 {
@@ -112,9 +116,10 @@ fn part2(commands: Vec<Command>) -> i64 {
                 state[y][x] = state[y][x] + 2;
             }
         },
-    );
-
-    state.iter().flatten().sum()
+    )
+    .iter()
+    .flatten()
+    .sum()
 }
 
 #[derive(Parser)]
