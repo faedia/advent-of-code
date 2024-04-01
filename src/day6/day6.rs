@@ -130,9 +130,9 @@ struct Cli {
 fn main() {
     let args: Cli = Cli::parse();
     let input_str = read_to_string(args.input).unwrap();
-    let part1_result = part1(parse_all(&input_str));
+    let part1_result = part1(input_str.lines().map(parse).collect());
     println!("Solution for part 1: {}", part1_result);
-    let part2_result = part2(parse_all(&input_str));
+    let part2_result = part2(input_str.lines().map(parse).collect());
     println!("Solution for part 2: {}", part2_result);
 }
 
