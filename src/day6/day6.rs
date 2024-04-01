@@ -60,26 +60,37 @@ fn parse_all(s: &str) -> Vec<Command> {
     s.lines().map(parse).collect()
 }
 
-fn part1(commands: Vec<Command>) -> usize {
-    let mut state = [[false; 1000]; 1000];
-
+fn do_commands<B, F>(commands: Vec<Command>, init: &mut B, mut f: F) -> ()
+where
+    F: FnMut(&mut B, &Command, (usize, usize)) -> (),
+{
     for command in commands {
         for y in command.range.from.1..command.range.to.1 + 1 {
             for x in command.range.from.0..command.range.to.0 + 1 {
-                match command.kind {
-                    CommandKind::TurnOn => {
-                        state[y][x] = true;
-                    }
-                    CommandKind::TurnOff => {
-                        state[y][x] = false;
-                    }
-                    CommandKind::Toggle => {
-                        state[y][x] = !state[y][x];
-                    }
-                }
+                f(init, &command, (x, y));
             }
         }
     }
+}
+
+fn part1(commands: Vec<Command>) -> usize {
+    let mut state = [[false; 1000]; 1000];
+
+    do_commands(
+        commands,
+        &mut state,
+        |state, command, (x, y)| match command.kind {
+            CommandKind::TurnOn => {
+                state[y][x] = true;
+            }
+            CommandKind::TurnOff => {
+                state[y][x] = false;
+            }
+            CommandKind::Toggle => {
+                state[y][x] = !state[y][x];
+            }
+        },
+    );
 
     state.iter().flatten().filter(|is_on| **is_on).count()
 }
@@ -87,23 +98,21 @@ fn part1(commands: Vec<Command>) -> usize {
 fn part2(commands: Vec<Command>) -> i64 {
     let mut state = [[0i64; 1000]; 1000].to_vec();
 
-    for command in commands {
-        for y in command.range.from.1..command.range.to.1 + 1 {
-            for x in command.range.from.0..command.range.to.0 + 1 {
-                match command.kind {
-                    CommandKind::TurnOn => {
-                        state[y][x] = state[y][x] + 1;
-                    }
-                    CommandKind::TurnOff => {
-                        state[y][x] = std::cmp::max(state[y][x] - 1, 0);
-                    }
-                    CommandKind::Toggle => {
-                        state[y][x] = state[y][x] + 2;
-                    }
-                }
+    do_commands(
+        commands,
+        &mut state,
+        |state, command, (x, y)| match command.kind {
+            CommandKind::TurnOn => {
+                state[y][x] = state[y][x] + 1;
             }
-        }
-    }
+            CommandKind::TurnOff => {
+                state[y][x] = std::cmp::max(state[y][x] - 1, 0);
+            }
+            CommandKind::Toggle => {
+                state[y][x] = state[y][x] + 2;
+            }
+        },
+    );
 
     state.iter().flatten().sum()
 }
