@@ -56,10 +56,6 @@ fn parse(s: &str) -> Command {
     }
 }
 
-fn parse_all(s: &str) -> Vec<Command> {
-    s.lines().map(parse).collect()
-}
-
 fn do_commands<B, F>(commands: Vec<Command>, mut init: B, mut f: F) -> B
 where
     F: FnMut(&mut B, &Command, (usize, usize)) -> (),
