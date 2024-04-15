@@ -29,6 +29,10 @@ path = "src/day5/day5.rs"
 name = "day6"
 path = "src/day6/day6.rs"
 
+[[bin]]
+name = "day7"
+path = "src/day7/day7.rs"
+
 [dependencies]
 clap = { version = "4.5.1", features = ["derive"] }
 md-5 = "0.10.6"
