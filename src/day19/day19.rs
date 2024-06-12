@@ -90,16 +90,15 @@ fn part2(init: &(HashMap<String, Vec<String>>, String), start: String) -> usize 
         println!("size {} current {}", size, current_string.len());
 
         for (key, values) in &inv {
-            let matches = current_string.match_indices(key);
-            for (idx, _) in matches {
-                for value in values {
-                    let mut inner_string = current_string.clone();
-                    inner_string.replace_range(idx..idx + key.len(), value);
-                    if let None = seen_set.get(&inner_string) {
-                        seen_set.insert(inner_string.clone());
-                        queue.push_back((inner_string, size + 1));
-                    }
-                }
+            let mut matches = current_string.match_indices(key);
+            if let Some((idx, _)) = matches.next() {
+                let value = values.first().unwrap();
+
+                let mut inner_string = current_string.clone();
+                inner_string.replace_range(idx..idx + key.len(), value);
+                seen_set.insert(inner_string.clone());
+                queue.push_back((inner_string, size + 1));
+                break;
             }
         }
     }
