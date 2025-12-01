@@ -13,7 +13,7 @@ contains
         
         do i = 1, size(operations)
             ! This winds us back round to the start
-            current = mod(current + operations(i) + 100, 100)
+            current = modulo(current + operations(i), 100)
             if (current == 0) then
                 count = count + 1
             end if
@@ -43,7 +43,7 @@ contains
                     offset = offset - 1
                 end if
                 count = count + offset
-                current = mod(current + mod(operations(i), 100) + 100, 100)
+                current = modulo(current + operations(i), 100)
             end block
         end do
     end function part2
