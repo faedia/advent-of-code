@@ -20,10 +20,11 @@ contains
         do i = 1, size(numbers)
             block
                 integer*8 :: num, half_idx
-                ! For each number in the range, extract the number to a string
-                ! Then we check to see if the The prefix of the string is equal to the suffix of the string!
                 do num = numbers(i)%lhs, numbers(i)%rhs
                     half_idx = (int8(log10(real(num))) + 1) / 2
+                    ! If the top half of the number equals the bottom half of the number then we are A Okay!
+                    ! This constructos formulas of the form 1234 / 100 and 1234 % 100
+                    ! Where the former would 1234 / 100 = 12 and the latter 1234 % 100 = 34.
                     if (num / (10**half_idx) == mod(num, 10**half_idx)) count = count + num
                 end do
             end block
@@ -42,14 +43,19 @@ contains
                 integer*8 :: num, total_digits, digits
                 do num = numbers(i)%lhs, numbers(i)%rhs
                     total_digits = (int8(log10(real(num))) + 1)
+                    ! For each possible digit windows length from 1 to half the total number of digits
                     do digits = 1, total_digits / 2
                         block
                             integer*8 :: multiple,times,amount
+                            ! Calculate the top digits amount value in num
                             multiple = num / (10**(total_digits - digits))
                             amount = 0
+                            ! The go ahead and construct multiple pattern repeated for how many times we need to repeat digits
                             do times = 1, total_digits / digits
+                                ! Pad to make sure there is enough space for multiple
                                 amount = (amount * (10**digits)) + multiple
                             end do
+                            ! If the total amount is the same as num then woooooooo our num is a repeating pattern!!
                             if (num == amount) then
                                 count = count + num
                                 exit
