@@ -19,21 +19,16 @@ contains
         ! For all set of numbers!!
         do i = 1, size(numbers)
             block
-                integer*8 :: num
-                character(len=100) :: num_str
+                integer*8 :: num, half_idx
                 ! For each number in the range, extract the number to a string
                 ! Then we check to see if the The prefix of the string is equal to the suffix of the string!
                 do num = numbers(i)%lhs, numbers(i)%rhs
-                    write(num_str, '(I0.0)') num
-                    if (trim(num_str(:len_trim(num_str)/2)) == trim(num_str((len_trim(num_str)/2)+1:))) then
-                        count = count + num
-                    end if
+                    half_idx = (int8(log10(real(num))) + 1) / 2
+                    if (num / (10**half_idx) == mod(num, 10**half_idx)) count = count + num
                 end do
             end block
         end do
     end function part1
-
-
 
     function part2(numbers) result(count)
         implicit none
@@ -44,39 +39,23 @@ contains
 
         do i = 1, size(numbers)
             block
-                integer*8 :: num
-                character(len=100) :: num_str
+                integer*8 :: num, total_digits, digits
                 do num = numbers(i)%lhs, numbers(i)%rhs
-                    ! Get that number into a string!
-                    write(num_str, '(I0.0)') num
-
-                    block
-                        integer*8 :: j, length
-                        logical :: is_invalid
-
-                        ! For each possible substring size.
-                        do length = 1, len_trim(num_str)/2
-                            ! If we cannot fit a whole number of windows into the string then skip it.
-                            if (mod(len_trim(num_str), length) /= 0) continue
-                            
-                            ! Starting assumption, think it is valid, this is turned false when we find a contradition.
-                            is_invalid = .true.
-                            ! For all distinct windows check that the strings are equal, this proves that the string is made of a repeating patter
-                            do j = length + 1, len_trim(num_str), length
-                                ! If its not equal we've found a counter example for this windows size fot his number so lets just continue.
-                                if (num_str(1:length) /= num_str(j:j+length-1)) then
-                                    is_invalid = .false.
-                                    exit
-                                end if
+                    total_digits = (int8(log10(real(num))) + 1)
+                    do digits = 1, total_digits / 2
+                        block
+                            integer*8 :: multiple,times,amount
+                            multiple = num / (10**(total_digits - digits))
+                            amount = 0
+                            do times = 1, total_digits / digits
+                                amount = (amount * (10**digits)) + multiple
                             end do
-                            if (is_invalid) exit
-                        end do
-
-                        ! If we went though all of that and we are still invalid so make sure to count the id!
-                        if (is_invalid) then
-                            count = count + num
-                        end if
-                    end block
+                            if (num == amount) then
+                                count = count + num
+                                exit
+                            end if
+                        end block
+                    end do
                 end do
             end block
         end do
