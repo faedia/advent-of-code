@@ -57,7 +57,6 @@ program day1
 
     implicit none
     integer, dimension(:), allocatable :: operations
-    integer :: part1_result, part2_result
     integer :: io
 
     open(newunit=io, file="day1.txt", status="old", action="read")
@@ -93,13 +92,22 @@ program day1
         end do
     end block
 
+    block
+        integer :: part1_result
+        real :: start_time, end_time
+        call cpu_time(start_time)
+        part1_result = part1(operations)
+        call cpu_time(end_time)
+        print *, part1_result, " Time taken: ", end_time - start_time
+    end block
 
-    part1_result = part1(operations)
-
-    print *, part1_result
-
-    part2_result = part2(operations)
-
-    print *, part2_result
+    block
+        integer*8 :: part2_result
+        real :: start_time, end_time
+        call cpu_time(start_time)
+        part2_result = part2(operations)
+        call cpu_time(end_time)
+        print *, part2_result, " Time taken: ", end_time - start_time
+    end block
 
 end program day1

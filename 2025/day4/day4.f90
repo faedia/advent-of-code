@@ -27,14 +27,20 @@ program day4
 
     block
         integer :: part1_result
+        real :: start_time, end_time
+        call cpu_time(start_time)
         part1_result = part1(lines)
-        print *, part1_result
+        call cpu_time(end_time)
+        print *, part1_result, " Time taken: ", end_time - start_time
     end block
 
     block
         integer*8 :: part2_result
+        real :: start_time, end_time
+        call cpu_time(start_time)
         part2_result = part2(lines)
-        print *, part2_result
+        call cpu_time(end_time)
+        print *, part2_result, " Time taken: ", end_time - start_time
     end block
 
 contains

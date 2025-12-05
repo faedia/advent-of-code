@@ -119,14 +119,20 @@ program day2
 
     block
         integer*8 :: result_part1
+        real :: start_time, end_time
+        call cpu_time(start_time)
         result_part1 = part1(numbers)
-        print *, result_part1
+        call cpu_time(end_time)
+        print *, result_part1, " Time taken: ", end_time - start_time
     end block
 
     block
         integer*8 :: result_part2
+        real :: start_time, end_time
+        call cpu_time(start_time)
         result_part2 = part2(numbers)
-        print *, result_part2
+        call cpu_time(end_time)
+        print *, result_part2, " Time taken: ", end_time - start_time
     end block
 
 end program day2
