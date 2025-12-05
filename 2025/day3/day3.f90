@@ -1,4 +1,4 @@
-program day1
+program day3
     implicit none
     character(len=100), dimension(:), allocatable :: banks
     integer :: io
@@ -105,4 +105,4 @@ contains
         end do
     end function part2
 
-end program day1
+end program day3
