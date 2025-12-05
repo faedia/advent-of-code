@@ -48,9 +48,10 @@ contains
     function part1(banks) result(count)
         implicit none
         character(len=100), dimension(:), intent(in) :: banks
-        integer :: count, i
+        integer :: count, i, bank_len
     
         count = 0
+        bank_len = len_trim(banks(1))
 
         do i = 1, size(banks)
             block
@@ -63,11 +64,11 @@ contains
                 ! From the second character onwards, either find a character that is large than our first character!
                 ! and move the start of our sequence to that point
                 ! Or find a character that is larger than our second character and just replace our second character.
-                do index = 2, len_trim(banks(i))
-                    if (index < len_trim(banks(i)) .and. banks(i)(index:index) > first_char) then
+                do index = 2, bank_len
+                    if (index < bank_len .and. iachar(banks(i)(index:index)) > iachar(first_char)) then
                         first_char = banks(i)(index:index)
                         second_char = banks(i)(index+1:index+1)
-                    else if (banks(i)(index:index) > second_char) then
+                    else if (iachar(banks(i)(index:index)) > iachar(second_char)) then
                         second_char = banks(i)(index:index)
                     end if
                 end do
@@ -82,9 +83,10 @@ contains
     function part2(banks) result(count)
         implicit none
         character(len=100), dimension(:), intent(in) :: banks
-        integer*8 :: count, i
+        integer*8 :: count, i, bank_len
         integer*8 :: digit, found_index, current_index
         character :: current_char
+        bank_len = len_trim(banks(1))
 
         count = 0
 
@@ -97,9 +99,9 @@ contains
                     current_char = banks(i)(found_index:found_index)
                     found_index = found_index + 1
                     ! Start from where we found our previous digit
-                    do current_index = found_index, len_trim(banks(i)) - 12 + digit
+                    do current_index = found_index, bank_len - 12 + digit
                         ! If its bigger then pick it!
-                        if (banks(i)(current_index:current_index) > current_char) then
+                        if (iachar(banks(i)(current_index:current_index)) > iachar(current_char)) then
                             current_char = banks(i)(current_index:current_index)
                             found_index = current_index + 1
                         end if
