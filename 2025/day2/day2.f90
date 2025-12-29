@@ -9,6 +9,43 @@ module day2_mod
 
 contains
 
+    integer function count_digits(num) result(count)
+        implicit none
+        integer*8, intent(in) :: num
+
+        if (num < 10) then
+            count = 1
+        else if (num < 100) then
+            count = 2
+        else if (num < 1000) then
+            count = 3
+        else if (num < 10000) then
+            count = 4
+        else if (num < 100000) then
+            count = 5
+        else if (num < 1000000) then
+            count = 6
+        else if (num < 10000000) then
+            count = 7
+        else if (num < 100000000) then
+            count = 8
+        else if (num < 1000000000) then
+            count = 9
+        else
+            count = 10
+        end if
+
+
+    end function count_digits
+
+    integer*8 function pow10(exp) result(value)
+        implicit none
+        integer*8, intent(in) :: exp
+        integer*8, dimension(0:9) :: powers = [1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000]
+
+        value = powers(exp)
+    end function pow10
+
     function part1(numbers) result(count)
         implicit none
         type(nums), dimension(:), intent(in) :: numbers
@@ -21,11 +58,11 @@ contains
             block
                 integer*8 :: num, half_idx
                 do num = numbers(i)%lhs, numbers(i)%rhs
-                    half_idx = (int8(log10(real(num))) + 1) / 2
+                    half_idx = (count_digits(num)) / 2
                     ! If the top half of the number equals the bottom half of the number then we are A Okay!
                     ! This constructos formulas of the form 1234 / 100 and 1234 % 100
                     ! Where the former would 1234 / 100 = 12 and the latter 1234 % 100 = 34.
-                    if (num / (10**half_idx) == mod(num, 10**half_idx)) count = count + num
+                    if (num / pow10(half_idx) == mod(num, pow10(half_idx))) count = count + num
                 end do
             end block
         end do
@@ -42,18 +79,18 @@ contains
             block
                 integer*8 :: num, total_digits, digits
                 do num = numbers(i)%lhs, numbers(i)%rhs
-                    total_digits = (int8(log10(real(num))) + 1)
+                    total_digits = (count_digits(num))
                     ! For each possible digit windows length from 1 to half the total number of digits
                     do digits = 1, total_digits / 2
                         block
                             integer*8 :: multiple,times,amount
                             ! Calculate the top digits amount value in num
-                            multiple = num / (10**(total_digits - digits))
+                            multiple = num / (pow10(total_digits - digits))
                             amount = 0
                             ! The go ahead and construct multiple pattern repeated for how many times we need to repeat digits
                             do times = 1, total_digits / digits
                                 ! Pad to make sure there is enough space for multiple
-                                amount = (amount * (10**digits)) + multiple
+                                amount = (amount * pow10(digits)) + multiple
                             end do
                             ! If the total amount is the same as num then woooooooo our num is a repeating pattern!!
                             if (num == amount) then
